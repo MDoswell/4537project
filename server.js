@@ -3,6 +3,7 @@ const express = require('express');
 const multer = require('multer');
 const axios = require('axios');
 const fs = require('fs');
+const cors = require('cors');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -11,6 +12,8 @@ const upload = multer({ dest: 'uploads/' });
 
 const API_URL = process.env.TRANSCRIPTION_API_URL;
 const API_KEY = process.env.API_KEY;
+
+app.use(cors())
 
 app.post('/transcribe', upload.single('file'), async (req, res) => {
     if (!req.file) {

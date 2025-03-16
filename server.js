@@ -12,7 +12,7 @@ const upload = multer({ dest: 'uploads/' });
 const API_URL = process.env.TRANSCRIPTION_API_URL;
 const API_KEY = process.env.API_KEY;
 
-app.post('/transcribe', upload.single('audio'), async (req, res) => {
+app.post('/transcribe', upload.single('file'), async (req, res) => {
     if (!req.file) {
         return res.status(400).json({ error: 'No file uploaded' });
     }

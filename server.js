@@ -10,10 +10,11 @@ const port = process.env.PORT || 3000;
 
 const upload = multer({ dest: 'uploads/' });
 
-const API_URL = process.env.TRANSCRIPTION_API_URL;
+const API_URL = process.env.API_URL;
 const API_KEY = process.env.API_KEY;
 
 app.use(cors())
+app.use(express.json())
 
 app.post('/transcribe', upload.single('file'), async (req, res) => {
     if (!req.file) {
@@ -30,7 +31,7 @@ app.post('/transcribe', upload.single('file'), async (req, res) => {
         const body = {
             file: file
         }
-        const response = await axios.post(API_URL, body, {headers: headers});
+        const response = await axios.post(API_URL + 'transcribe', body, {headers: headers});
 
         fs.unlinkSync(audioFilePath);
 
@@ -38,6 +39,25 @@ app.post('/transcribe', upload.single('file'), async (req, res) => {
     } catch (error) {
         console.error('Error:', error);
         res.status(500).json({ error: 'Failed to transcribe audio' });
+    }
+});
+
+app.post('/gradeanswer', async (req, res) => {
+    try {
+        const headers = {
+            'api-key': API_KEY,
+            'Content-Type': 'application/json'
+        }
+        const body = {
+            text: req.body.text
+        }
+        console.log(API_URL);
+        const response = await axios.post(API_URL + 'gradeanswer', body, {headers: headers});
+
+        res.json(response.data);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Failed to grade answer' });
     }
 });
 
